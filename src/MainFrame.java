@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 
+import model.User;
+
 public class MainFrame extends JFrame {
 
     private CardLayout cardLayout;
@@ -9,6 +11,9 @@ public class MainFrame extends JFrame {
     private MenuPanel menuPanel;
     private GamePanel gamePanel;
     private ScorePanel scorePanel;
+    private LeaderboardPanel leaderboardPanel;
+
+    private User loggedUser;
 
     private int lastDifficulty = -1;
 
@@ -25,12 +30,14 @@ public class MainFrame extends JFrame {
         menuPanel = new MenuPanel(this);
         gamePanel = new GamePanel(this);
         scorePanel = new ScorePanel(this);
+        leaderboardPanel = new LeaderboardPanel(this);
 
         // Daftarkan panel ke dalam CardLayout
         mainPanel.add(loginPanel, "login");
         mainPanel.add(menuPanel, "menu");
         mainPanel.add(gamePanel, "game");
         mainPanel.add(scorePanel, "score");
+        mainPanel.add(leaderboardPanel, "leaderboard");
 
         // Panel pertama yang ditampilkan
         cardLayout.show(mainPanel, "login");
@@ -40,13 +47,22 @@ public class MainFrame extends JFrame {
         this.setTitle("Keystrike Apocalypse");
         this.setSize(914, 637);
         this.setLocationRelativeTo(null);
-        System.out.println("Frame size: " + this.getSize());
         this.setVisible(true);
     }
 
     // Method helper untuk mengganti panel
     public void showPanel(String name) {
+        if (name.equals("leaderboard")) {
+            leaderboardPanel.refreshLeaderboard();
+        }
         cardLayout.show(mainPanel, name);
+    }
+
+    public void showMenu() {
+        if (loggedUser != null) {
+            menuPanel.updateWelcome(loggedUser.getUsername());
+        }
+        showPanel("menu");
     }
 
     public void startGame(int maxDifficulty) {
@@ -71,6 +87,14 @@ public class MainFrame extends JFrame {
 
     public ScorePanel getScorePanel() {
         return scorePanel;
+    }
+
+    public void setLoggedUser(User user) {
+        this.loggedUser = user;
+    }
+
+    public User getLoggedUser() {
+        return loggedUser;
     }
 
 }

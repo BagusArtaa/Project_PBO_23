@@ -3,6 +3,8 @@ package dao;
 import java.sql.*;
 import org.mindrot.jbcrypt.BCrypt;
 
+import model.User;
+
 public class UserDAO {
 
     public int loginUser(String username, String password) {
@@ -12,18 +14,14 @@ public class UserDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, username);
-
             try (ResultSet rs = stmt.executeQuery()) {
-                if (!rs.next()) {
-                    return -1;
-                }
 
-                String storedHash = rs.getString("password_hash");
+                if (!rs.next()) return -1;
 
-                if (BCrypt.checkpw(password, storedHash)) {
+                String hash = rs.getString("password_hash");
+                if (BCrypt.checkpw(password, hash)) {
                     return rs.getInt("id");
                 }
-
                 return -1;
             }
 
@@ -32,7 +30,6 @@ public class UserDAO {
             return -1;
         }
     }
-
 
     public boolean registerUser(String username, String password) {
 
@@ -53,4 +50,28 @@ public class UserDAO {
             return false;
         }
     }
+
+    public User getUserById(int id) {
+        String sql = "SELECT id, username, created_at FROM users WHERE id = ? LIMIT 1";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.next()) return null;
+
+                return new User(
+                    rs.getInt("id"),
+                    rs.getString("username"),
+                    rs.getString("created_at")
+                );
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

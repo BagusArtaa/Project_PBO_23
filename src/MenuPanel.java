@@ -9,6 +9,7 @@ public class MenuPanel extends JPanel {
     private JButton btnEasy;
     private JButton btnNormal;
     private JButton btnExpert;
+    private JButton btnLeaderboard;
     private JButton btnLogout;
 
     private Image backgroundImage;
@@ -55,6 +56,10 @@ public class MenuPanel extends JPanel {
         gbc.gridy = 3;
         add(btnExpert, gbc);
 
+        btnLeaderboard = createMenuButton("Leaderboard");
+        gbc.gridy = 4;
+        add(btnLeaderboard, gbc);
+
         btnLogout = createSmallButton("Logout");
         gbc.gridy = 5;
         add(btnLogout, gbc);
@@ -93,17 +98,27 @@ public class MenuPanel extends JPanel {
         return btn;
     }
 
+    // ================================================================
+    // PAINT BACKGROUND GAMBAR
+    // ================================================================
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
     }
 
+    public void updateWelcome(String username) {
+        welcomeLabel.setText("Selamat Datang, " + username + "!");
+    }
+
+    // ================================================================
+    // LISTENERS
+    // ================================================================
     private void addListeners() {
         btnEasy.addActionListener(e -> frame.startGame(1));
         btnNormal.addActionListener(e -> frame.startGame(2));
         btnExpert.addActionListener(e -> frame.startGame(3));
-
+        btnLeaderboard.addActionListener(e -> frame.showPanel("leaderboard"));
         btnLogout.addActionListener(e -> frame.showPanel("login"));
     }
 }

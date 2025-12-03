@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 import dao.UserDAO;
+import model.User;
 
 public class LoginPanel extends JPanel {
 
@@ -50,7 +51,7 @@ public class LoginPanel extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
 
         JLabel userLabel = new JLabel("Username:");
-        userLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+        userLabel.setFont(new Font("Serif", Font.BOLD, 20));
         userLabel.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 1;
@@ -58,7 +59,7 @@ public class LoginPanel extends JPanel {
         add(userLabel, gbc);
 
         userField = new JTextField(20);
-        userField.setFont(new Font("Serif", Font.PLAIN, 14));
+        userField.setFont(new Font("Serif", Font.PLAIN, 20));
         userField.setPreferredSize(new Dimension(250, 35));
         gbc.gridx = 1;
         gbc.gridy = 1;
@@ -66,7 +67,7 @@ public class LoginPanel extends JPanel {
         add(userField, gbc);
 
         JLabel passLabel = new JLabel("Password:");
-        passLabel.setFont(new Font("Serif", Font.PLAIN, 20));
+        passLabel.setFont(new Font("Serif", Font.BOLD, 20));
         passLabel.setForeground(Color.WHITE);
         gbc.gridx = 0;
         gbc.gridy = 2;
@@ -144,13 +145,18 @@ public class LoginPanel extends JPanel {
             int userId = dao.loginUser(username, password);
 
             if (userId != -1) {
+                User userObj = dao.getUserById(userId);
                 JOptionPane.showMessageDialog(
                         this,
                         "Login berhasil!.",
                         "Login Sukses",
                         JOptionPane.INFORMATION_MESSAGE);
 
-                frame.showPanel("menu");
+                frame.setLoggedUser(userObj);
+                frame.showMenu();
+
+                userField.setText("");
+                passField.setText("");
 
             } else {
                 JOptionPane.showMessageDialog(
